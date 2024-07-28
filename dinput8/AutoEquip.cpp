@@ -4,6 +4,10 @@ extern CCore* Core;
 extern CAutoEquip* AutoEquip;
 extern SCore* CoreStruct;
 
+DWORD64 SkipWeapons = 0;
+DWORD64 SkipProtection = 0;
+DWORD64 SkipRings = 0;
+
 DWORD dRingSlotSelect = 0x11;
 DWORD pHelmetList[110];
 DWORD pBodyList[105];
@@ -14,6 +18,12 @@ VOID fAutoEquip(UINT_PTR pItemBuffer, DWORD64 pItemData, DWORD64 qReturnAddress)
 	if (*(int*)(pItemData) >= 0) AutoEquip->AutoEquipItem(pItemBuffer, qReturnAddress);
 	return;
 };
+
+VOID CAutoEquip::ChangeOptions(DWORD64 skipWeapons, DWORD64 skipProtection, DWORD64 skipRings) {
+	SkipWeapons = skipWeapons;
+	SkipProtection = skipProtection;
+	SkipRings = skipRings;
+}
 
 VOID CAutoEquip::AutoEquipItem(UINT_PTR pItemBuffer, DWORD64 qReturnAddress) {
 
@@ -68,11 +78,13 @@ BOOL CAutoEquip::SortItem(DWORD dItemID, SEquipBuffer* E) {
 
 	switch (dItemType) {
 	case(ItemType_Weapon): {
+		if (SkipWeapons != 0) return false; //Don't equip weapon if skipped in .ini
 		if ((dItemID >> 0x10) == 6) return false; //Don't equip ammo
 		if ((dItemID & 0xFF000000) << 4 != 0x10000000) dEquipSlot = 1; //If these conditions are met, it's a shield.
 		break;
 	};
 	case(ItemType_Protector): {
+		if (SkipProtection != 0) return false; //Don't equip protection if skipped in .ini
 		if (FindEquipType(dItemID, &pHelmetList[0])) dEquipSlot = 0x0C;
 		else if (FindEquipType(dItemID, &pBodyList[0])) dEquipSlot = 0x0D;
 		else if (FindEquipType(dItemID, &pHandsList[0])) dEquipSlot = 0x0E;
@@ -80,6 +92,7 @@ BOOL CAutoEquip::SortItem(DWORD dItemID, SEquipBuffer* E) {
 		break;
 	};
 	case(ItemType_Accessory): {
+		if (SkipRings != 0) return false; //Don't equip rings if skipped in .ini
 		if (dRingSlotSelect >= 0x15) dRingSlotSelect = 0x11;
 		dEquipSlot = dRingSlotSelect;
 		dRingSlotSelect++;

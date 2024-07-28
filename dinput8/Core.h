@@ -64,6 +64,7 @@ public:
 class CAutoEquip {
 public:
 	virtual VOID AutoEquipItem(UINT_PTR pItemBuffer, DWORD64 qReturnAddress);
+	virtual VOID ChangeOptions(DWORD64 skipWeapons, DWORD64 skipProtection, DWORD64 skipRings);
 	virtual BOOL SortItem(DWORD dItemID, SEquipBuffer* E);
 	virtual BOOL FindEquipType(DWORD dItem, DWORD* pArray);
 	virtual DWORD GetInventorySlotID(DWORD dItemID);
@@ -77,9 +78,15 @@ struct SCore {
 	DWORD dIsAutoSave;
 	DWORD dRandomsieHealItems;
 	DWORD dRandomiseKeyItems;
+	
 	DWORD dIsAutoEquip;
 	DWORD dLockEquipSlots;
 	DWORD dIsNoWeaponRequirements;
+
+	DWORD dSkipWeapons;
+	DWORD dSkipProtection;
+	DWORD dSkipRings;
+
 	DWORD dIsMessageActive;
 	DWORD dIsListChanged;
 	UINT_PTR qLocalPlayer = 0x144740178;

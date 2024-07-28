@@ -12,6 +12,10 @@ DWORD64 rAutoEquip = 0;
 DWORD64 rNoWeaponRequirements = 0;
 DWORD64 rEquipLock = 0;
 
+DWORD64 rSkipWeapons = 0;
+DWORD64 rSkipProtection = 0;
+DWORD64 rSkipRings = 0;
+
 VOID CCore::Start() {
 
 	Core = new CCore();
@@ -31,6 +35,9 @@ VOID CCore::Start() {
 		Core->Panic("Failed to initialise", "...\\Randomiser\\Core\\Core.cpp", FE_InitFailed, 1);
 		int3
 	};
+
+	//Change settings of autoequip based on initilization
+	AutoEquip->ChangeOptions(rSkipWeapons, rSkipProtection, rSkipRings);
 
 	while (true) {
 		Core->Run();
@@ -87,6 +94,9 @@ BOOL CCore::Initialise() {
 	CoreStruct->dIsAutoEquip = reader.GetBoolean("AutoEquip", "AutoEquipToggle", true);
 	CoreStruct->dLockEquipSlots = reader.GetBoolean("AutoEquip", "LockEquipSlots", false);
 	CoreStruct->dIsNoWeaponRequirements = reader.GetBoolean("AutoEquip", "NoWeaponRequirements", false);
+	CoreStruct->dSkipWeapons = reader.GetBoolean("AutoEquip", "SkipWeapons", false);
+	CoreStruct->dSkipProtection = reader.GetBoolean("AutoEquip", "SkipProtection", false);
+	CoreStruct->dSkipRings = reader.GetBoolean("AutoEquip", "SkipRings", false);
 
 	CoreStruct->pOffsetArray = (DWORD*)HeapAlloc(CoreStruct->hHeap, 8, 0x3000);
 	CoreStruct->pItemArray = (DWORD*)HeapAlloc(CoreStruct->hHeap, 8, 0x3000);
@@ -110,6 +120,12 @@ BOOL CCore::Initialise() {
 	sprintf_s(pBuffer, "[AutoEquip] - LockEquipSlots = %i\n", CoreStruct->dLockEquipSlots);
 	printf_s(pBuffer);
 	sprintf_s(pBuffer, "[AutoEquip] - NoWeaponRequirements = %i\n", CoreStruct->dIsNoWeaponRequirements);
+	printf_s(pBuffer);
+	sprintf_s(pBuffer, "[AutoEquip] - SkipWeapons = %i\n", CoreStruct->dSkipWeapons);
+	printf_s(pBuffer);
+	sprintf_s(pBuffer, "[AutoEquip] - SkipProtection = %i\n", CoreStruct->dSkipProtection);
+	printf_s(pBuffer);
+	sprintf_s(pBuffer, "[AutoEquip] - SkipRings = %i\n", CoreStruct->dSkipRings);
 	printf_s(pBuffer);
 #endif
 
